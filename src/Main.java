@@ -25,10 +25,14 @@ public class Main {
 //        System.out.println(map.getLowDegree());
 //        System.out.println(map.getHighDegree());
 
-        List test=new LinkedList();
-        test.add(1);
-        test.add("PNC");
-        test.add(true);
-        System.out.println(test.get(0));
+//    String s1="A1B";
+//    String s2="A1B";
+//
+//        List keList=new LinkedList<>();
+//        keList.add(s1);
+//        System.out.println(keList.contains(s2));
+
+        Map mapp=map.miniSpan();
+
     }
 }

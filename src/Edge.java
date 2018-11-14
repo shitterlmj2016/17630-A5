@@ -2,11 +2,11 @@
 
 public class Edge {
     private int weight;
-    private String vt;
+    private String vertexName;
 
     public Edge(int weight, String vt) {
         this.weight = weight;
-        this.vt = vt;
+        this.vertexName = vt;
     }
 
     public int getWeight() {
@@ -17,11 +17,11 @@ public class Edge {
         this.weight = weight;
     }
 
-    public String getVt() {
-        return vt;
+    public String getVertexName() {
+        return vertexName;
     }
 
-    public void setVt(String vt) {
-        this.vt = vt;
+    public void setVertexName(String vertexName) {
+        this.vertexName = vertexName;
     }
 }

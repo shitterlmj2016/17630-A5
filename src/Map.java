@@ -1,7 +1,20 @@
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class Map {
+    //Compare the weight of two edges
+    private static Comparator<String> weightComparator = new Comparator<String>() {
+        @Override
+        public int compare(String s1, String s2) {
+            char[] c1 = s1.toCharArray();
+            char[] c2 = s2.toCharArray();
+            int i = (int) c1[1];
+            int j = (int) c2[1];
+            return i - j;
+        }
+    };
     private List vertexList;
 
     public Map() {
@@ -56,7 +69,7 @@ public class Map {
 
             for (int j = 0; j < length; j++) {
                 Edge edge = (Edge) (v.getEdgeList().get(j));
-                System.out.print("[" + edge.getVt() + "," + edge.getWeight() + "]");
+                System.out.print("[" + edge.getVertexName() + "," + edge.getWeight() + "]");
                 if (j != length - 1) {
                     System.out.print("; ");
                 }
@@ -96,11 +109,112 @@ public class Map {
         return degree;
     }
 
+    ;
 
-    public Map miniSpan()
-    {
-        Map map=new Map();
+    //Create strings in VertexWeightVertex format
+    private LinkedList<String> getEdgeBag() {
+        LinkedList bag = new LinkedList<String>();
+        for (int i = 0; i < vertexList.size(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            for (int j = 0; j < v.getEdgeList().size(); j++) {
+                Edge edge = (Edge) v.getEdgeList().get(j);
+
+                String from = v.getName();
+                String to = edge.getVertexName();
+                String weight = String.valueOf(edge.getWeight());
+
+                //Check if both Strings are not in the bag
+                String pathOne = from + weight + to;
+                String pathTwo = to + weight + from;
+                if (!bag.contains(pathOne) && !bag.contains(pathTwo))
+                    bag.add(pathOne);
+            }
+
+        }
+
+        return bag;
+    }
+
+    //Check if we have finished building the tree
+    private boolean checkFinished(char[] vertexRecoder) {
+
+        for (int i = 0; i < vertexRecoder.length; i++) {
+            if (vertexRecoder[i] < 97)
+                return false;
+        }
+        return true;
+
+    }
+
+    private void tick(char[] vertexRecoder, char a) {
+        for (int i = 0; i < vertexRecoder.length; i++) {
+            if (vertexRecoder[i] == a)
+                vertexRecoder[i] = (char) ((int) vertexRecoder[i] + 32);
+        }
+    }
+
+    private boolean checkIsLoop(char[] vertexRecoder, char a, char b) {
+        boolean p = false;
+        boolean q = false;
+        for (int i = 0; i < vertexRecoder.length; i++) {
+            if (vertexRecoder[i] == a + 32)
+                p = true;
+            if (vertexRecoder[i] == b + 32)
+                q = true;
+        }
+        return p & q;
+    }
+
+
+    //KRUSKAL
+    public Map miniSpan() {
+        //The set of all vertexes
+        char[] vertexRecoder = new char[vertexList.size()];
+        for (int i = 0; i < vertexList.size(); i++) {
+            char[] temp = ((String) ((Vertex) vertexList.get(i)).getName()).toCharArray();
+            vertexRecoder[i] = temp[0];
+        }
+
+
+        LinkedList bag = getEdgeBag();
+        PriorityQueue<String> queue = new PriorityQueue<String>(
+                weightComparator) {
+        };
+
+        for (int i = 0; i < bag.size(); i++) {
+            queue.add((String) bag.get(i));
+        }
+
+
+        while (!queue.isEmpty()) {
+            String poll = queue.poll();
+            char[] temp = poll.toCharArray();
+            char from = temp[0];
+            char to = temp[2];
+
+                System.out.println(poll);
+                tick(vertexRecoder, from);
+                tick(vertexRecoder, to);
+
+            if (checkFinished(vertexRecoder))
+                break;
+        }
+
+
+//        queue.add("A3B");
+//        queue.add("B2C");
+//        queue.add("C2E");
+//        queue.add("E5F");
+//        System.out.println(queue.poll());
+//        System.out.println(queue.poll());
+//        System.out.println(queue.poll());
+//        System.out.println(queue.poll());
+        Map map = new Map();
+        int[] a = new int[26];
+
+
         return map;
     }
+
 
 }
