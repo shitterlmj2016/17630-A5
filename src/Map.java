@@ -46,25 +46,61 @@ public class Map {
     public void print() {
         if (getSize() == 0) {
             System.out.println("Sorry, the map is empty.");
+            return;
         }
 
         for (int i = 0; i < getSize(); i++) {
             Vertex v = (Vertex) vertexList.get(i);
-            System.out.print(v.getName()+": ");
-            int length=v.getEdgeList().size();
+            System.out.print(v.getName() + ": ");
+            int length = v.getEdgeList().size();
 
-            for(int j=0;j<length;j++){
-                Edge edge=(Edge)(v.getEdgeList().get(j));
-                System.out.print("["+edge.getVt()+","+edge.getWeight()+"]");
-                if(j!=length-1)
-                {
+            for (int j = 0; j < length; j++) {
+                Edge edge = (Edge) (v.getEdgeList().get(j));
+                System.out.print("[" + edge.getVt() + "," + edge.getWeight() + "]");
+                if (j != length - 1) {
                     System.out.print("; ");
                 }
             }
             System.out.println();
         }
 
+    }
 
+    public int getLowDegree() {
+        if (getSize() == 0) {
+            return 0;
+        }
+        Vertex v = (Vertex) getVertexList().get(0);
+        int degree = v.getDegree();
+
+        for (int i = 1; i < getSize(); i++) {
+            v = (Vertex) getVertexList().get(i);
+            if (v.getDegree() < degree)
+                degree = v.getDegree();
+        }
+        return degree;
+    }
+
+    public int getHighDegree() {
+        if (getSize() == 0) {
+            return 0;
+        }
+        Vertex v = (Vertex) getVertexList().get(0);
+        int degree = v.getDegree();
+
+        for (int i = 1; i < getSize(); i++) {
+            v = (Vertex) getVertexList().get(i);
+            if (v.getDegree() > degree)
+                degree = v.getDegree();
+        }
+        return degree;
+    }
+
+
+    public Map miniSpan()
+    {
+        Map map=new Map();
+        return map;
     }
 
 }
