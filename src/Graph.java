@@ -3,7 +3,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-public class Map {
+public class Graph {
     //Compare the weight of two edges
     private static Comparator<String> weightComparator = new Comparator<String>() {
         @Override
@@ -18,7 +18,7 @@ public class Map {
     private List vertexList;
     private List hashArray;
 
-    public Map() {
+    public Graph() {
         vertexList = new LinkedList<Vertex>();
     }
 
@@ -59,7 +59,7 @@ public class Map {
 
     public void print() {
         if (getSize() == 0) {
-            System.out.println("Sorry, the map is empty.");
+            System.out.println("Sorry, the graph is empty.");
             return;
         }
 
@@ -168,7 +168,7 @@ public class Map {
 
 
     //KRUSKAL
-    public Map miniSpan() {
+    public Graph miniSpan() {
         //The set of all vertexes
         char[] vertexRecoder = new char[vertexList.size()];
         for (int i = 0; i < vertexList.size(); i++) {
@@ -188,7 +188,7 @@ public class Map {
 
 
         UnionFind uf = new UnionFind(getSize());
-        Map map = new Map();
+        Graph graph = new Graph();
         while (uf.count() != 1) {
             String poll = queue.poll();
             char[] temp = poll.toCharArray();
@@ -199,25 +199,18 @@ public class Map {
             int vertexA = hash(from);
             int vertexB = hash(to);
 
-
-
+            //Automatically remove circle and
             if (!uf.connected(vertexA, vertexB)) {
-                uf.union(vertexA,vertexB);
+                uf.union(vertexA, vertexB);
                 System.out.println(poll);
-
             }
-
 
         }
 
-
-
-
-
-        return map;
+        return graph;
     }
 
-    public int hash(char c) {
+    private int hash(char c) {
         int size = getSize();
         String s = String.valueOf(c);
         if (size == 0) {
@@ -231,5 +224,89 @@ public class Map {
         }
         return -1;
     }
+
+
+    public void Euler() {
+        if(getSize()==0) {
+            System.out.println("Sorry, the graph is empty.");
+            return;
+        }
+        if(!isConnected())
+        {
+            System.out.println("Sorry, the graph is not connected.");
+            return;
+        }
+        if(!checkDegree())
+        {
+            System.out.println("Sorry, there is no euler path in this graph.");
+        }
+
+
+
+    }
+
+    //Check if it is even or odd
+public boolean checkDegree()
+{
+    int odd =0;
+    for(int i=0;i<getSize();i++)
+    {
+        Vertex v= (Vertex)vertexList.get(i);
+        if((v.getDegree()%2)!=0)
+        {
+            odd++;
+        }
+    }
+    System.out.println(odd);
+    return(odd==2||odd==0);
+
+}
+
+
+
+    private boolean isConnected()
+    {
+        UnionFind uf=new UnionFind(getSize());
+
+        for(int i=0;i<getSize();i++)
+        {
+            Vertex v=(Vertex)vertexList.get(i);
+            int from=hash(v.getName().toCharArray()[0]);
+            for(int j=0;j<v.getDegree();j++)
+            {
+                Edge e=(Edge)v.getEdgeList().get(j);
+                int to=hash(e.getVertexName().toCharArray()[0]);
+                System.out.print(v.getName().toCharArray()[0]);
+                System.out.println(e.getVertexName().toCharArray()[0]);
+                uf.union(from,to);
+
+            }
+
+        }
+
+        System.out.println(uf.count());
+        return uf.count()==1;
+
+    }
+
+
+public int[][] getMatrix()
+{
+    int [][] matrix=new int [getSize()][getSize()];
+    for(int i=0;i<getSize();i++)
+    {
+        Vertex v=(Vertex)vertexList.get(i);
+        int from=hash(v.getName().toCharArray()[0]);
+        for(int j=0;j<v.getDegree();j++)
+        {
+            Edge e=(Edge)v.getEdgeList().get(j);
+            int to=hash(e.getVertexName().toCharArray()[0]);
+            matrix[from][to]=1;
+        }
+    }
+    return matrix;
+}
+
+
 
 }
