@@ -16,6 +16,7 @@ public class Map {
         }
     };
     private List vertexList;
+    private List hashArray;
 
     public Map() {
         vertexList = new LinkedList<Vertex>();
@@ -186,35 +187,49 @@ public class Map {
         }
 
 
-        while (!queue.isEmpty()) {
+        UnionFind uf = new UnionFind(getSize());
+        Map map = new Map();
+        while (uf.count() != 1) {
             String poll = queue.poll();
             char[] temp = poll.toCharArray();
             char from = temp[0];
             char to = temp[2];
+            char weigh = temp[1];
 
+            int vertexA = hash(from);
+            int vertexB = hash(to);
+
+
+
+            if (!uf.connected(vertexA, vertexB)) {
+                uf.union(vertexA,vertexB);
                 System.out.println(poll);
-                tick(vertexRecoder, from);
-                tick(vertexRecoder, to);
 
-            if (checkFinished(vertexRecoder))
-                break;
+            }
+
+
         }
 
 
-//        queue.add("A3B");
-//        queue.add("B2C");
-//        queue.add("C2E");
-//        queue.add("E5F");
-//        System.out.println(queue.poll());
-//        System.out.println(queue.poll());
-//        System.out.println(queue.poll());
-//        System.out.println(queue.poll());
-        Map map = new Map();
-        int[] a = new int[26];
+
 
 
         return map;
     }
 
+    public int hash(char c) {
+        int size = getSize();
+        String s = String.valueOf(c);
+        if (size == 0) {
+            System.out.println("Sorry, the size is zero");
+            return -1;
+        }
+        for (int i = 0; i < size; i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            if (s.equals(v.getName()))
+                return i;
+        }
+        return -1;
+    }
 
 }
