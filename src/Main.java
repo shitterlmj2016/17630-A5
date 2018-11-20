@@ -33,7 +33,7 @@ public class Main {
 //        map.addVertexByString(e);
 
 
-        int[][] matrix = map.getMatrix();
+        int[][] matrix = map.getBoolMatrix();
         int start =0;
         for(int i=0;i<map.getSize();i++)
         {

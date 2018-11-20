@@ -241,7 +241,7 @@ public class Graph {
             System.out.println("Sorry, there is no euler path in this graph.");
             return;
         }
-        matrix = getMatrix();
+        matrix = getBoolMatrix();
         int start = 0;
         for (int i = 0; i < getSize(); i++) {
             if (isOdd(matrix[i])) {
@@ -354,7 +354,7 @@ public class Graph {
     }
 
 
-    public int[][] getMatrix() {
+    public int[][] getBoolMatrix() {
         int[][] matrix = new int[getSize()][getSize()];
         for (int i = 0; i < getSize(); i++) {
             Vertex v = (Vertex) vertexList.get(i);
@@ -368,6 +368,22 @@ public class Graph {
         this.matrix=matrix;
         return matrix;
     }
+
+    public int[][] getMatrix() {
+        int[][] matrix = new int[getSize()][getSize()];
+        for (int i = 0; i < getSize(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            int from = hash(v.getName().toCharArray()[0]);
+            for (int j = 0; j < v.getDegree(); j++) {
+                Edge e = (Edge) v.getEdgeList().get(j);
+                int to = hash(e.getVertexName().toCharArray()[0]);
+                matrix[from][to] = e.getWeight();
+            }
+        }
+        return matrix;
+    }
+
+
 
 
 }
