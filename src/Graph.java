@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Graph {
-    //Compare the weight of two edges
     private static Comparator<String> weightComparator = new Comparator<String>() {
         @Override
         public int compare(String s1, String s2) {
@@ -15,6 +14,8 @@ public class Graph {
             return i - j;
         }
     };
+    //Compare the weight of two edges
+    private int[][] matrix;
     private List vertexList;
     private List hashArray;
 
@@ -210,7 +211,7 @@ public class Graph {
         return graph;
     }
 
-    private int hash(char c) {
+    public int hash(char c) {
         int size = getSize();
         String s = String.valueOf(c);
         if (size == 0) {
@@ -226,87 +227,147 @@ public class Graph {
     }
 
 
-    public void Euler() {
-        if(getSize()==0) {
+    public void euler() {
+        if (getSize() == 0) {
             System.out.println("Sorry, the graph is empty.");
             return;
         }
-        if(!isConnected())
-        {
+        if (!isConnected()) {
             System.out.println("Sorry, the graph is not connected.");
             return;
         }
-        if(!checkDegree())
-        {
+        System.out.println("There are "+countOdd()+ " odd node(s) is this graph.");
+        if (countOdd()!=0&&countOdd()!=2) {
             System.out.println("Sorry, there is no euler path in this graph.");
+            return;
         }
-
-
+        matrix = getMatrix();
+        int start = 0;
+        for (int i = 0; i < getSize(); i++) {
+            if (isOdd(matrix[i])) {
+                start = i;
+                break;
+            }
+        }
+        System.out.println("Here's the euler path:");
+        fleury(start);
 
     }
 
-    //Check if it is even or odd
-public boolean checkDegree()
-{
-    int odd =0;
-    for(int i=0;i<getSize();i++)
-    {
-        Vertex v= (Vertex)vertexList.get(i);
-        if((v.getDegree()%2)!=0)
-        {
-            odd++;
-        }
-    }
-    System.out.println(odd);
-    return(odd==2||odd==0);
 
-}
+    public void fleury(int index) {
+        //int start = 0;//The index of the start vertex
 
+        if (isEmpty(matrix[index]))
+            return;
 
-
-    private boolean isConnected()
-    {
-        UnionFind uf=new UnionFind(getSize());
-
-        for(int i=0;i<getSize();i++)
-        {
-            Vertex v=(Vertex)vertexList.get(i);
-            int from=hash(v.getName().toCharArray()[0]);
-            for(int j=0;j<v.getDegree();j++)
-            {
-                Edge e=(Edge)v.getEdgeList().get(j);
-                int to=hash(e.getVertexName().toCharArray()[0]);
-                System.out.print(v.getName().toCharArray()[0]);
-                System.out.println(e.getVertexName().toCharArray()[0]);
-                uf.union(from,to);
+        for (int i = 0; i < getSize(); i++) {
+            if (matrix[index][i] == 1) {
+                if (!isOdd(matrix[i]))
+                { System.out.println("From "+hashBack(index)+" to "+hashBack(i));
+                    matrix[index][i]=0;
+                    matrix[i][index]=0;
+                    fleury(i);
+                    return;
+                }
+                //是桥
+                System.out.println("From "+hashBack(index)+" to "+hashBack(i));
+                matrix[index][i]=0;
+                matrix[i][index]=0;
+                fleury(i);
+                return;
 
             }
 
         }
 
-        System.out.println(uf.count());
-        return uf.count()==1;
 
     }
 
 
-public int[][] getMatrix()
-{
-    int [][] matrix=new int [getSize()][getSize()];
-    for(int i=0;i<getSize();i++)
+    public String hashBack(int i)
+    {   Vertex v=(Vertex)vertexList.get(i);
+        return v.getName();
+    }
+
+    public boolean isOdd(int[] array) {
+        int sum = 0;
+        for (int i = 0; i < array.length; i++)
+            sum = sum + array[i];
+        return (sum % 2) != 0;
+    }
+
+
+    public boolean isEmpty(int[] array)
     {
-        Vertex v=(Vertex)vertexList.get(i);
-        int from=hash(v.getName().toCharArray()[0]);
-        for(int j=0;j<v.getDegree();j++)
-        {
-            Edge e=(Edge)v.getEdgeList().get(j);
-            int to=hash(e.getVertexName().toCharArray()[0]);
-            matrix[from][to]=1;
-        }
-    }
-    return matrix;
-}
+        int sum = 0;
+        for (int i = 0; i < array.length; i++)
+            sum = sum + array[i];
+        return sum==0;
 
+    }
+
+
+    //Check if it is even or odd
+    public boolean checkDegree() {
+        int odd = 0;
+        for (int i = 0; i < getSize(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            if ((v.getDegree() % 2) != 0) {
+                odd++;
+            }
+        }
+
+        return (odd == 2 || odd == 0);
+    }
+
+    public int countOdd() {
+        int odd = 0;
+        for (int i = 0; i < getSize(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            if ((v.getDegree() % 2) != 0) {
+                odd++;
+            }
+        }
+
+        return odd;
+    }
+
+    private boolean isConnected() {
+        UnionFind uf = new UnionFind(getSize());
+
+        for (int i = 0; i < getSize(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            int from = hash(v.getName().toCharArray()[0]);
+            for (int j = 0; j < v.getDegree(); j++) {
+                Edge e = (Edge) v.getEdgeList().get(j);
+                int to = hash(e.getVertexName().toCharArray()[0]);
+                uf.union(from, to);
+
+            }
+
+        }
+
+
+        return uf.count() == 1;
+
+    }
+
+
+    public int[][] getMatrix() {
+        int[][] matrix = new int[getSize()][getSize()];
+        for (int i = 0; i < getSize(); i++) {
+            Vertex v = (Vertex) vertexList.get(i);
+            int from = hash(v.getName().toCharArray()[0]);
+            for (int j = 0; j < v.getDegree(); j++) {
+                Edge e = (Edge) v.getEdgeList().get(j);
+                int to = hash(e.getVertexName().toCharArray()[0]);
+                matrix[from][to] = 1;
+            }
+        }
+        this.matrix=matrix;
+        return matrix;
+    }
 
 
 }
