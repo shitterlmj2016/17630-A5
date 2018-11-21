@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 public class Graph {
+    static int INF = (int) Double.POSITIVE_INFINITY;
     private static Comparator<String> weightComparator = new Comparator<String>() {
         @Override
         public int compare(String s1, String s2) {
@@ -236,8 +237,8 @@ public class Graph {
             System.out.println("Sorry, the graph is not connected.");
             return;
         }
-        System.out.println("There are "+countOdd()+ " odd node(s) is this graph.");
-        if (countOdd()!=0&&countOdd()!=2) {
+        System.out.println("There are " + countOdd() + " odd node(s) is this graph.");
+        if (countOdd() != 0 && countOdd() != 2) {
             System.out.println("Sorry, there is no euler path in this graph.");
             return;
         }
@@ -263,17 +264,17 @@ public class Graph {
 
         for (int i = 0; i < getSize(); i++) {
             if (matrix[index][i] == 1) {
-                if (!isOdd(matrix[i]))
-                { System.out.println("From "+hashBack(index)+" to "+hashBack(i));
-                    matrix[index][i]=0;
-                    matrix[i][index]=0;
+                if (!isOdd(matrix[i])) {
+                    System.out.println("From " + hashBack(index) + " to " + hashBack(i));
+                    matrix[index][i] = 0;
+                    matrix[i][index] = 0;
                     fleury(i);
                     return;
                 }
                 //是桥
-                System.out.println("From "+hashBack(index)+" to "+hashBack(i));
-                matrix[index][i]=0;
-                matrix[i][index]=0;
+                System.out.println("From " + hashBack(index) + " to " + hashBack(i));
+                matrix[index][i] = 0;
+                matrix[i][index] = 0;
                 fleury(i);
                 return;
 
@@ -285,8 +286,8 @@ public class Graph {
     }
 
 
-    public String hashBack(int i)
-    {   Vertex v=(Vertex)vertexList.get(i);
+    public String hashBack(int i) {
+        Vertex v = (Vertex) vertexList.get(i);
         return v.getName();
     }
 
@@ -298,12 +299,11 @@ public class Graph {
     }
 
 
-    public boolean isEmpty(int[] array)
-    {
+    public boolean isEmpty(int[] array) {
         int sum = 0;
         for (int i = 0; i < array.length; i++)
             sum = sum + array[i];
-        return sum==0;
+        return sum == 0;
 
     }
 
@@ -365,7 +365,7 @@ public class Graph {
                 matrix[from][to] = 1;
             }
         }
-        this.matrix=matrix;
+        this.matrix = matrix;
         return matrix;
     }
 
@@ -384,6 +384,31 @@ public class Graph {
     }
 
 
+    public void getBestPath(char from, char to) {
+        if (getSize() == 0) {
+            System.out.println("Sorry, the graph is empty.");
+            return;
+        }
+        int i = hash(from);
+        int j = hash(to);
+        int[][] adjacencyMatrix = getMatrix();
+        Floyd floyd = new Floyd(adjacencyMatrix);
 
+        if (floyd.getCost(i, j) == INF) {
+            System.out.println("Sorry, they are not connected.");
+            return;
+        }
+
+        System.out.println("Best path found! Minimum cost: "+floyd.getCost(i,j));
+        System.out.println("Now printing the route: ");
+        LinkedList<int[]> list = floyd.getRoute(i, j);
+        for (int k = 0; k < list.size(); k++) {
+            int[] route = list.get(k);
+            System.out.print("Step "+(k+1)+": " );
+            System.out.println("From "+hashBack(route[0])+" to " + hashBack(route[2]) + ", cost: " + route[1]);
+
+        }
+
+    }
 
 }

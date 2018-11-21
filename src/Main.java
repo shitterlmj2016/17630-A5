@@ -33,17 +33,6 @@ public class Main {
 //        map.addVertexByString(e);
 
 
-        int[][] matrix = map.getMatrix();
-        int start =0;
-        for(int i=0;i<map.getSize();i++)
-        {
-            if(map.isOdd(matrix[i])) {
-                start = i;
-                break;
-            }
-        }
-
-        System.out.println();
-        map.euler();
+map.getBestPath('A','D');
     }
 }

@@ -22,8 +22,8 @@ public class Floyd {
             }
         }
 
-        printPath();
-        printWeight();
+        printPathMatrix();
+        printCostMatrix();
         for (int k = 0; k < size; k++) {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
@@ -56,8 +56,8 @@ public class Floyd {
 
     }
 
-    private void printPath() {
-        System.out.println("Weight");
+    private void printPathMatrix() {
+        System.out.println("path:");
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++)
                 System.out.print(path[i][j] + " ");
@@ -67,8 +67,8 @@ public class Floyd {
 
     }
 
-    private void printWeight() {
-        System.out.println("Path");
+    private void printCostMatrix() {
+        System.out.println("cost:");
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++)
                 System.out.print(weight[i][j] + " ");
