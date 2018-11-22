@@ -34,7 +34,20 @@ public class Vertex {
     }
 
     public int getDegree() {
-        return edgeList.size();
+        int size = edgeList.size();
+
+        return size;
+    }
+
+    public int getCircleDegree() {
+        int size = edgeList.size();
+        for (int i = 0; i < edgeList.size(); i++) {
+            Edge e = (Edge) edgeList.get(i);
+            if (e.getVertexName().equals(name))
+                size++;
+        }
+        return size;
+
     }
 
     //Remove possible Circles

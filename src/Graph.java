@@ -87,12 +87,12 @@ public class Graph {
             return 0;
         }
         Vertex v = (Vertex) getVertexList().get(0);
-        int degree = v.getDegree();
+        int degree = v.getCircleDegree();
 
         for (int i = 1; i < getSize(); i++) {
             v = (Vertex) getVertexList().get(i);
-            if (v.getDegree() < degree)
-                degree = v.getDegree();
+            if (v.getCircleDegree() < degree)
+                degree = v.getCircleDegree();
         }
         return degree;
     }
@@ -102,12 +102,12 @@ public class Graph {
             return 0;
         }
         Vertex v = (Vertex) getVertexList().get(0);
-        int degree = v.getDegree();
+        int degree = v.getCircleDegree();
 
         for (int i = 1; i < getSize(); i++) {
             v = (Vertex) getVertexList().get(i);
-            if (v.getDegree() > degree)
-                degree = v.getDegree();
+            if (v.getCircleDegree() > degree)
+                degree = v.getCircleDegree();
         }
         return degree;
     }
@@ -170,8 +170,14 @@ public class Graph {
 
 
     //KRUSKAL
-    public Graph miniSpan() {
+    public void miniSpan() {
         //The set of all vertexes
+        if(!isConnected())
+        {
+            System.out.println("Sorry, the graph is not connected");
+            return;
+        }
+        System.out.println("Minimum spanning tree found, here's all the edges.");
         char[] vertexRecoder = new char[vertexList.size()];
         for (int i = 0; i < vertexList.size(); i++) {
             char[] temp = ((String) ((Vertex) vertexList.get(i)).getName()).toCharArray();
@@ -191,6 +197,7 @@ public class Graph {
 
         UnionFind uf = new UnionFind(getSize());
         Graph graph = new Graph();
+        int count=1;
         while (uf.count() != 1) {
             String poll = queue.poll();
             char[] temp = poll.toCharArray();
@@ -204,12 +211,14 @@ public class Graph {
             //Automatically remove circle and
             if (!uf.connected(vertexA, vertexB)) {
                 uf.union(vertexA, vertexB);
-                System.out.println(poll);
+                System.out.print("Edge "+count+": ");
+                System.out.println((char)from+"-"+(char)to+" ");
+                count++;
             }
 
         }
 
-        return graph;
+        return;
     }
 
     public int hash(char c) {
@@ -325,7 +334,10 @@ public class Graph {
         int odd = 0;
         for (int i = 0; i < getSize(); i++) {
             Vertex v = (Vertex) vertexList.get(i);
-            if ((v.getDegree() % 2) != 0) {
+            //loop?
+            int degree=v.getCircleDegree();
+
+            if ((degree % 2) != 0) {
                 odd++;
             }
         }
