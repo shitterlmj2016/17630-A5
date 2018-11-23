@@ -2,6 +2,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.regex.Pattern;
 
 public class Graph {
     static int INF = (int) Double.POSITIVE_INFINITY;
@@ -15,6 +16,7 @@ public class Graph {
             return i - j;
         }
     };
+
     //Compare the weight of two edges
     private int[][] matrix;
     private List vertexList;
@@ -22,6 +24,18 @@ public class Graph {
 
     public Graph() {
         vertexList = new LinkedList<Vertex>();
+    }
+
+
+    public static boolean isNumeric(String string) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(string).matches();
+    }
+
+    //Tell if the input is from A-Z
+    private boolean islegalVname(char name) {
+        return (name < 91 && name > 64);
+
     }
 
     public List getVertexList() {
@@ -36,7 +50,8 @@ public class Graph {
         return vertexList.size();
     }
 
-    public void addVertexByString(String a) {
+    public boolean addVertexByString(String a) {
+
         a = a.replaceAll("[]| |:|;|]", "");
         //A[B,2[C,3
         String[] temp = a.split("\\[");
@@ -44,6 +59,11 @@ public class Graph {
 
         //vertice name
         String vname = temp[0];
+
+        //Tell if the vertex name is right
+        char name = vname.toCharArray()[0];
+        if (!islegalVname(name))
+            return false;
 
         //v is a new vertice
         Vertex v = new Vertex(vname);
@@ -53,10 +73,23 @@ public class Graph {
 
             //B||2
             String[] vw = edge.split(",");
+
+            //Check if the destination vertex's name is legal
+            char dname = vw[0].toCharArray()[0];
+
+            if (!islegalVname(dname))
+                return false;
+
+
+            //Check if the weight is a legal number
+            if (!isNumeric(vw[1]))
+                return false;
+
             Edge e = new Edge(Integer.parseInt(vw[1]), vw[0]);
             v.addEdge(e);
         }
         vertexList.add(v);
+        return true;
     }
 
     public void print() {
@@ -88,12 +121,15 @@ public class Graph {
         }
         Vertex v = (Vertex) getVertexList().get(0);
         int degree = v.getCircleDegree();
-
+        Vertex low = v;
         for (int i = 1; i < getSize(); i++) {
             v = (Vertex) getVertexList().get(i);
-            if (v.getCircleDegree() < degree)
+            if (v.getCircleDegree() < degree) {
                 degree = v.getCircleDegree();
+                low = v;
+            }
         }
+        System.out.println("The low degree is " + low.getName() + ": " + degree);
         return degree;
     }
 
@@ -103,12 +139,16 @@ public class Graph {
         }
         Vertex v = (Vertex) getVertexList().get(0);
         int degree = v.getCircleDegree();
-
+        Vertex high = v;
         for (int i = 1; i < getSize(); i++) {
             v = (Vertex) getVertexList().get(i);
-            if (v.getCircleDegree() > degree)
+            if (v.getCircleDegree() > degree) {
                 degree = v.getCircleDegree();
+                high = v;
+            }
         }
+
+        System.out.println("The high degree is " + high.getName() + ": " + degree);
         return degree;
     }
 
@@ -172,8 +212,7 @@ public class Graph {
     //KRUSKAL
     public void miniSpan() {
         //The set of all vertexes
-        if(!isConnected())
-        {
+        if (!isConnected()) {
             System.out.println("Sorry, the graph is not connected");
             return;
         }
@@ -197,7 +236,7 @@ public class Graph {
 
         UnionFind uf = new UnionFind(getSize());
         Graph graph = new Graph();
-        int count=1;
+        int count = 1;
         while (uf.count() != 1) {
             String poll = queue.poll();
             char[] temp = poll.toCharArray();
@@ -211,8 +250,8 @@ public class Graph {
             //Automatically remove circle and
             if (!uf.connected(vertexA, vertexB)) {
                 uf.union(vertexA, vertexB);
-                System.out.print("Edge "+count+": ");
-                System.out.println((char)from+"-"+(char)to+" ");
+                System.out.print("Edge " + count + ": ");
+                System.out.println((char) from + "-" + (char) to + " ");
                 count++;
             }
 
@@ -273,14 +312,17 @@ public class Graph {
 
         for (int i = 0; i < getSize(); i++) {
             if (matrix[index][i] == 1) {
+                //None bridge first
                 if (!isOdd(matrix[i])) {
+
                     System.out.println("From " + hashBack(index) + " to " + hashBack(i));
                     matrix[index][i] = 0;
                     matrix[i][index] = 0;
                     fleury(i);
                     return;
                 }
-                //是桥
+                //Is a bridge
+
                 System.out.println("From " + hashBack(index) + " to " + hashBack(i));
                 matrix[index][i] = 0;
                 matrix[i][index] = 0;
@@ -335,7 +377,7 @@ public class Graph {
         for (int i = 0; i < getSize(); i++) {
             Vertex v = (Vertex) vertexList.get(i);
             //loop?
-            int degree=v.getCircleDegree();
+            int degree = v.getCircleDegree();
 
             if ((degree % 2) != 0) {
                 odd++;
@@ -411,13 +453,13 @@ public class Graph {
             return;
         }
 
-        System.out.println("Best path found! Minimum cost: "+floyd.getCost(i,j));
+        System.out.println("Best path found! Minimum cost: " + floyd.getCost(i, j));
         System.out.println("Now printing the route: ");
         LinkedList<int[]> list = floyd.getRoute(i, j);
         for (int k = 0; k < list.size(); k++) {
             int[] route = list.get(k);
-            System.out.print("Step "+(k+1)+": " );
-            System.out.println("From "+hashBack(route[0])+" to " + hashBack(route[2]) + ", cost: " + route[1]);
+            System.out.print("Step " + (k + 1) + ": ");
+            System.out.println("From " + hashBack(route[0]) + " to " + hashBack(route[2]) + ", cost: " + route[1]);
 
         }
 
