@@ -50,6 +50,11 @@ public class Main {
 
             //Case 1 Create a graph from a file
             if (CharItem == '1') {
+                if(graph.getSize()!=0)
+                {
+                    System.out.println("Sorry, a graph already exists!");
+                    continue;
+                }
 
                 System.out.println("Please input the file path: ");
                 System.out.println("Example: C:\\Users\\xchuang1995\\Desktop\\input.txt");
