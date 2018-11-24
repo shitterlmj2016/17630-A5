@@ -1,3 +1,9 @@
+//17630-A5 Graph
+//Andrew ID: xinchenh
+//Name: Xincheng Huang
+//Main Class
+//This class is the test harness
+
 import java.io.*;
 import java.util.List;
 import java.util.Scanner;

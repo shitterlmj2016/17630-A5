@@ -1,11 +1,29 @@
+//17630-A5 Graph
+//Andrew ID: xinchenh
+//Name: Xincheng Huang
+//Floyd Class
+//This class helps calculate the best path usin floyd algorithm
+
+//FLoy ADT provides two operations
+//getCost: get the cost of the best path from A to B, input two chars, return an integer
+//getRoute: get the route of the best path from A to B, input two chars, return a list of vertex
+
 import java.util.LinkedList;
 
 public class Floyd {
-    static int INF = (int) Double.POSITIVE_INFINITY;
-    int size;
+    static int INF = (int) Double.POSITIVE_INFINITY;//Represent two vertexes are not connected
+
+    int size; //The total number of all the nodes
     private int[][] path;//Path
     private int[][] weight;//Distance
 
+
+    //Construction
+    //Brief explanation:
+    //A to B has two choices
+    // 1. A to B directly
+    // 2. A to somewhere else on the planet (C) to B
+    // Try every nodes, after that the minimum path is found
     public Floyd(int[][] matrix) {
         size = matrix.length;
         path = new int[size][size];
@@ -22,8 +40,6 @@ public class Floyd {
             }
         }
 
-        //printPathMatrix();
-        //printCostMatrix();
         for (int k = 0; k < size; k++) {
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
@@ -40,22 +56,7 @@ public class Floyd {
         }
     }
 
-    public static void main(String[] args) {
-
-        int[][] a = {{0, 3, 4, 0, 0, 0}, {3, 0, 0, 8, 3, 6}, {4, 0, 0, 5, 0, 0}, {0, 8, 5, 0, 2, 0}, {0, 3, 0, 2, 0, 2}, {0, 6, 0, 0, 2, 0}};
-        //Test case 2
-        int[][] b = {{0, 1, 3, 0, 0, 0}, {1, 0, 0, 1, 0, 0}, {3, 0, 0, 2, 0, 0}, {0, 1, 2, 12, 0, 0}, {0, 0, 0, 0, 0, 3}, {0, 0, 0, 0, 3, 7}};
-        Floyd floyd = new Floyd(a);
-        LinkedList list=floyd.getRoute(0,0);
-        for(int i=0;i<list.size();i++)
-        {
-            int []route=(int [])list.get(i);
-
-            System.out.println(route[0]+"-"+route[1]+"-"+route[2]);
-        }
-
-    }
-
+    //Debug function
     private void printPathMatrix() {
         System.out.println("path:");
         for (int i = 0; i < size; i++) {
@@ -67,6 +68,7 @@ public class Floyd {
 
     }
 
+    //Debug function
     private void printCostMatrix() {
         System.out.println("cost:");
         for (int i = 0; i < size; i++) {
@@ -78,6 +80,7 @@ public class Floyd {
 
     }
 
+    //Debug function
     public void printRoute(int from, int to) {
         if (weight[from][to] == INF) {
             System.out.println("Sorry, they are not connected");
@@ -98,11 +101,13 @@ public class Floyd {
 
     }
 
-
+    //Get the total cost of two vertexes, return an integer
     public int getCost(int from, int to) {
         return weight[from][to];
     }
 
+    //Get the best route from A to B
+    //Return a list of all vertexes' name
     public LinkedList<int[]> getRoute(int from, int to) {
         LinkedList list = new LinkedList();
 

@@ -1,3 +1,12 @@
+//17630-A5 Graph
+//Andrew ID: xinchenh
+//Name: Xincheng Huang
+//Floyd Class
+//This class helps calculate the best path usin floyd algorithm
+//Too many things to included in the head file, please refer to the writeup
+//Components: A list of its vertexes
+
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -6,6 +15,8 @@ import java.util.regex.Pattern;
 
 public class Graph {
     static int INF = (int) Double.POSITIVE_INFINITY;
+
+    //Comparator is used for heap for minimun spanning tree
     private static Comparator<String> weightComparator = new Comparator<String>() {
         @Override
         public int compare(String s1, String s2) {
@@ -22,27 +33,30 @@ public class Graph {
     private List vertexList;
     private List hashArray;
 
+    //Construction
     public Graph() {
         vertexList = new LinkedList<Vertex>();
     }
 
-
+    //Check if the input is a number
     public static boolean isNumeric(String string) {
         Pattern pattern = Pattern.compile("[0-9]*");
         return pattern.matcher(string).matches();
     }
 
-    //Tell if the input is from A-Z
+    //Check if the input is from A-Z
     private boolean islegalVname(char name) {
         return (name < 91 && name > 64);
 
     }
 
+    //Get the list of vertexes
     public List getVertexList() {
         return vertexList;
     }
 
-    public void addVertex(Vertex v) {
+    //Add an vertex to the graph
+    private void addVertex(Vertex v) {
         vertexList.add(v);
     }
 
@@ -50,6 +64,8 @@ public class Graph {
         return vertexList.size();
     }
 
+
+    //Add an vertex to the graph by string
     public boolean addVertexByString(String a) {
 
         a = a.replaceAll("[]| |:|;|]", "");
@@ -92,12 +108,14 @@ public class Graph {
         return true;
     }
 
+    //Print the graph
     public void print() {
         if (getSize() == 0) {
             System.out.println("Sorry, the graph is empty.");
             return;
         }
 
+        //Keep to the format thing
         for (int i = 0; i < getSize(); i++) {
             Vertex v = (Vertex) vertexList.get(i);
             System.out.print(v.getName() + ": ");
@@ -115,6 +133,7 @@ public class Graph {
 
     }
 
+    //Get the low degree
     public int getLowDegree() {
         if (getSize() == 0) {
             return 0;
@@ -133,6 +152,7 @@ public class Graph {
         return degree;
     }
 
+    //Get the high degree
     public int getHighDegree() {
         if (getSize() == 0) {
             return 0;
@@ -152,9 +172,10 @@ public class Graph {
         return degree;
     }
 
-    ;
 
     //Create strings in VertexWeightVertex format
+    //Like A5B
+    //It is used for heap to get minimun spanning tree
     private LinkedList<String> getEdgeBag() {
         LinkedList bag = new LinkedList<String>();
         for (int i = 0; i < vertexList.size(); i++) {
@@ -178,40 +199,10 @@ public class Graph {
         return bag;
     }
 
-    //Check if we have finished building the tree
-    private boolean checkFinished(char[] vertexRecoder) {
-
-        for (int i = 0; i < vertexRecoder.length; i++) {
-            if (vertexRecoder[i] < 97)
-                return false;
-        }
-        return true;
-
-    }
-
-    private void tick(char[] vertexRecoder, char a) {
-        for (int i = 0; i < vertexRecoder.length; i++) {
-            if (vertexRecoder[i] == a)
-                vertexRecoder[i] = (char) ((int) vertexRecoder[i] + 32);
-        }
-    }
-
-    private boolean checkIsLoop(char[] vertexRecoder, char a, char b) {
-        boolean p = false;
-        boolean q = false;
-        for (int i = 0; i < vertexRecoder.length; i++) {
-            if (vertexRecoder[i] == a + 32)
-                p = true;
-            if (vertexRecoder[i] == b + 32)
-                q = true;
-        }
-        return p & q;
-    }
-
-
-    //KRUSKAL
+    //KRUSKAL Algorithm
     public void miniSpan() {
         //The set of all vertexes
+        //Check if the map is connected
         if (!isConnected()) {
             System.out.println("Sorry, the graph is not connected");
             return;
@@ -223,17 +214,18 @@ public class Graph {
             vertexRecoder[i] = temp[0];
         }
 
-
+        //Get all edges in the format of VertexWeightVertex String
         LinkedList bag = getEdgeBag();
         PriorityQueue<String> queue = new PriorityQueue<String>(
                 weightComparator) {
         };
 
         for (int i = 0; i < bag.size(); i++) {
+            //Add all edge to the heap
             queue.add((String) bag.get(i));
         }
 
-
+        //
         UnionFind uf = new UnionFind(getSize());
         Graph graph = new Graph();
         int count = 1;
@@ -247,7 +239,9 @@ public class Graph {
             int vertexA = hash(from);
             int vertexB = hash(to);
 
-            //Automatically remove circle and
+            //Automatically remove circle
+            //If these two vertexes have already been connected, simply throw them
+            //Otherwise, union them
             if (!uf.connected(vertexA, vertexB)) {
                 uf.union(vertexA, vertexB);
                 System.out.print("Edge " + count + ": ");
@@ -260,7 +254,9 @@ public class Graph {
         return;
     }
 
-    public int hash(char c) {
+
+    //Hash from an A-Z to the corresponding index
+    private int hash(char c) {
         int size = getSize();
         String s = String.valueOf(c);
         if (size == 0) {
@@ -276,15 +272,18 @@ public class Graph {
     }
 
 
+    //Get the euler path
     public void euler() {
         if (getSize() == 0) {
             System.out.println("Sorry, the graph is empty.");
             return;
         }
+        //Check if the graph is connected
         if (!isConnected()) {
             System.out.println("Sorry, the graph is not connected.");
             return;
         }
+        //Check if the graph has 0 or 2 odd nodes
         System.out.println("There are " + countOdd() + " odd node(s) is this graph.");
         if (countOdd() != 0 && countOdd() != 2) {
             System.out.println("Sorry, there is no euler path in this graph.");
@@ -292,6 +291,8 @@ public class Graph {
         }
         matrix = getBoolMatrix();
         int start = 0;
+        //Find an odd node to start
+        //If none found, start from the first node
         for (int i = 0; i < getSize(); i++) {
             if (isOdd(matrix[i])) {
                 start = i;
@@ -300,16 +301,17 @@ public class Graph {
         }
         System.out.println("Here's the euler path:");
         fleury(start);
-
     }
 
 
-    public void fleury(int index) {
-        //int start = 0;//The index of the start vertex
+    private void fleury(int index) {
 
+        //Check if all edges have been covered
         if (isEmpty(matrix[index]))
             return;
 
+        //If not, gone throw all the vertexes this vertexes connected to
+        //Find an none-bridge edge to start with
         for (int i = 0; i < getSize(); i++) {
             if (matrix[index][i] == 1) {
                 //None bridge first
@@ -321,7 +323,7 @@ public class Graph {
                     fleury(i);
                     return;
                 }
-                //Is a bridge
+                //Only bridges are left
 
                 System.out.println("From " + hashBack(index) + " to " + hashBack(i));
                 matrix[index][i] = 0;
@@ -336,21 +338,22 @@ public class Graph {
 
     }
 
-
-    public String hashBack(int i) {
+    //Hash form an index to the character it corresponds to
+    private String hashBack(int i) {
         Vertex v = (Vertex) vertexList.get(i);
         return v.getName();
     }
 
-    public boolean isOdd(int[] array) {
+    //Check if a vertex has an odd degree
+    private boolean isOdd(int[] array) {
         int sum = 0;
         for (int i = 0; i < array.length; i++)
             sum = sum + array[i];
         return (sum % 2) != 0;
     }
 
-
-    public boolean isEmpty(int[] array) {
+    //check if an array is empty
+    private boolean isEmpty(int[] array) {
         int sum = 0;
         for (int i = 0; i < array.length; i++)
             sum = sum + array[i];
@@ -372,6 +375,7 @@ public class Graph {
         return (odd == 2 || odd == 0);
     }
 
+    //Count how many odd vertexes are there in the graph
     public int countOdd() {
         int odd = 0;
         for (int i = 0; i < getSize(); i++) {
@@ -387,6 +391,7 @@ public class Graph {
         return odd;
     }
 
+    //Check if the map is connected through union find
     private boolean isConnected() {
         UnionFind uf = new UnionFind(getSize());
 
@@ -402,12 +407,13 @@ public class Graph {
 
         }
 
-
+        //In the end, if count is one means that the map is connected
         return uf.count() == 1;
 
     }
 
 
+    //Remove the weight of adjacency matrix
     public int[][] getBoolMatrix() {
         int[][] matrix = new int[getSize()][getSize()];
         for (int i = 0; i < getSize(); i++) {
@@ -423,6 +429,7 @@ public class Graph {
         return matrix;
     }
 
+    //Get the adjacency matrix
     public int[][] getMatrix() {
         int[][] matrix = new int[getSize()][getSize()];
         for (int i = 0; i < getSize(); i++) {
@@ -437,7 +444,8 @@ public class Graph {
         return matrix;
     }
 
-
+    //Get the best path from A to B
+    //Using floyd algorithm
     public void getBestPath(char from, char to) {
         if (getSize() == 0) {
             System.out.println("Sorry, the graph is empty.");
